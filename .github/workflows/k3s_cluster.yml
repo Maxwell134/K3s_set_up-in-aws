@@ -2,7 +2,7 @@ name: Deploy K3s with NGINX Ingress
 
 on:
   repository_dispatch:
-    types: [trigger_k3s_setup]
+    types: [my-event]
   
 
 jobs:
