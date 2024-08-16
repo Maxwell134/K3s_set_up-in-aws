@@ -1,7 +1,11 @@
 name: Deploy K3s with NGINX Ingress
 
 on:
-  workflow_dispatch 
+
+  workflow_run:
+    workflows: [Checking Docker Login]
+    types: completed
+  
 
 jobs:
   deploy:
