@@ -65,8 +65,27 @@ jobs:
             --selector=app.kubernetes.io/component=controller \
             --timeout=300s
 
+      - name: Get issue comments
+        id: get_comments
+        run: |
+          COMMENTS_URL=$(curl -s -H "Authorization: token ${{ secrets.ACCESS_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/issues/${{ secrets.ISSUE_NUMBER }} \
+            | jq -r '.comments_url')
+          curl -s -H "Authorization: token ${{ secrets.ACCESS_TOKEN }}" $COMMENTS_URL | jq -r '.[].body' > comments.txt
+
+      - name: Check for user input
+        id: check_input
+        run: |
+          if grep -iq 'yes' comments.txt; then
+            echo "Proceed with script.sh"
+            echo "::set-output name=proceed::true"
+          else
+            echo "Skip script.sh"
+            echo "::set-output name=proceed::false"
+          fi
 
       - name: Run script 
+        if: steps.check_input.outputs.proceed == 'true'
         run: |
           chmod +x script.sh 
           ./script.sh 
