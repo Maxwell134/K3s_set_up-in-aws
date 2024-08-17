@@ -16,54 +16,54 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-      - name: List files for debugging
-        run: |
-          ls -al mychart
+      # - name: Set up Python
+      #   uses: actions/setup-python@v4
+      #   with:
+      #     python-version: '3.x'
+      # - name: List files for debugging
+      #   run: |
+      #     ls -al mychart
 
 
-      - name: Install Ansible
-        run: |
-          python -m pip install --upgrade pip
-          pip install ansible
+      # - name: Install Ansible
+      #   run: |
+      #     python -m pip install --upgrade pip
+      #     pip install ansible
 
-      - name: Run Ansible Playbook
-        run: ansible-playbook k3_install.yml
+      # - name: Run Ansible Playbook
+      #   run: ansible-playbook k3_install.yml
 
-      - name: Set up kubectl
-        run: |
-          mkdir -p $HOME/.kube
-          sudo cp /etc/rancher/k3s/k3s.yaml $HOME/.kube/config
-          sudo chown $USER:$USER $HOME/.kube/config
-          chmod 644 $HOME/.kube/config
-          export KUBECONFIG=$HOME/.kube/config
-          # kubectl create ns reddit-app
-          kubectl get nodes 
+      # - name: Set up kubectl
+      #   run: |
+      #     mkdir -p $HOME/.kube
+      #     sudo cp /etc/rancher/k3s/k3s.yaml $HOME/.kube/config
+      #     sudo chown $USER:$USER $HOME/.kube/config
+      #     chmod 644 $HOME/.kube/config
+      #     export KUBECONFIG=$HOME/.kube/config
+      #     # kubectl create ns reddit-app
+      #     kubectl get nodes 
 
-      - name: Configure Ingress controller    
-        run: |
-          export KUBECONFIG=$HOME/.kube/config
-          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-          # sudo apt install snapd
-          # sudo snap install helm --classic
+      # - name: Configure Ingress controller    
+      #   run: |
+      #     export KUBECONFIG=$HOME/.kube/config
+      #     curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      #     # sudo apt install snapd
+      #     # sudo snap install helm --classic
 
 
-          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-          helm repo update
-          # helm install nginx-ingress ingress-nginx/ingress-nginx
-          helm install nginx-ingress ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace
+      #     helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+      #     helm repo update
+      #     # helm install nginx-ingress ingress-nginx/ingress-nginx
+      #     helm install nginx-ingress ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace
 
-      - name: Wait for NGINX Ingress controller to be ready
-        run: |
-          export KUBECONFIG=$HOME/.kube/config
-          echo "Waiting for NGINX Ingress controller to be ready..."
-          kubectl wait --namespace  ingress-nginx\
-            --for=condition=ready pod \
-            --selector=app.kubernetes.io/component=controller \
-            --timeout=300s
+      # - name: Wait for NGINX Ingress controller to be ready
+      #   run: |
+      #     export KUBECONFIG=$HOME/.kube/config
+      #     echo "Waiting for NGINX Ingress controller to be ready..."
+      #     kubectl wait --namespace  ingress-nginx\
+      #       --for=condition=ready pod \
+      #       --selector=app.kubernetes.io/component=controller \
+      #       --timeout=300s
 
 
       - name: Run script 
