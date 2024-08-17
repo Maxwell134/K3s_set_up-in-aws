@@ -1,6 +1,7 @@
 name: Test with the flow
+
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
 
 jobs:
   build:
@@ -8,10 +9,7 @@ jobs:
     
     steps:
       - name: Checkout Repository
-        uses: action@checkout@v4
+        uses: actions/checkout@v4
         
       - name: Hello world
         run: echo "hello world"
-    
-    
-    
