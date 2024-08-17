@@ -5,7 +5,7 @@
 replicaCount: 3
 
 image:
-  repository: 'Pull image from docerhub'
+  repository: '7002370412/tumlog'
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
