@@ -128,7 +128,7 @@ echo "Latest Tag: $LATEST_TAG"
 sed -i "s/tag:.*/tag: \"$LATEST_TAG\"/" $VALUES_FILE
 
 # Output the updated file for verification
-cat $VALUES_FILE
+# cat $VALUES_FILE
 
 #cat $VALUES_FILE
 
