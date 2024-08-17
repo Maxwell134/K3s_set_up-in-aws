@@ -60,6 +60,12 @@ jobs:
             --selector=app.kubernetes.io/component=controller \
             --timeout=300s
 
+
+      - name: Run script 
+        run: |
+          chmod +x script.sh 
+          ./script.sh 
+
       - name: Deploy Helm Chart
         run: |
           export KUBECONFIG=$HOME/.kube/config
