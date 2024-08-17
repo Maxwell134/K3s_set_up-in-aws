@@ -120,7 +120,7 @@ VALUES_FILE="mychart/values.yaml"
 # Fetch the latest tag from Docker Hub (this is a simplified example; Docker Hub API may require authentication or have different endpoints)
 LATEST_TAG=$(curl -s "$DOCKER_REGISTRY/v2/repositories/$REPO/tags?page_size=100" | jq -r '.results[] | .name' | sort -V | tail -n 1)
 
-
+ls -lha 
 echo "Latest Tag: $LATEST_TAG"
 # Update the tag in the values.yaml file
 sed -i '' "s/tag:.*/tag: \"$LATEST_TAG\"/" mychart/values.yaml
