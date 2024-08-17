@@ -2,7 +2,7 @@ name: Triggered by Repository Dispatch
 
 on:
   repository_dispatch:
-    types: [custom-event]
+    types: [ custom-event ]
 
 jobs:
   handle_dispatch:
