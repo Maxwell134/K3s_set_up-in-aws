@@ -22,7 +22,7 @@ jobs:
           python-version: '3.x'
       - name: List files for debugging
         run: |
-          ls -al myrelease/
+          ls -al mychart
 
 
       - name: Install Ansible
