@@ -2,7 +2,7 @@ name: Deploy K3s with NGINX Ingress
 
 on:
   repository_dispatch:
-    types: ['Checking Docker Login']
+    types: [ on-demand-test ]
     # workflows: ['Test with the flow']
     # branches: main
     # types: 
