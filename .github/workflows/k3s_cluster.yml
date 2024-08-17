@@ -20,104 +20,108 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-
-      - name: Install Ansible
+      - name: List files for debugging
         run: |
-          python -m pip install --upgrade pip
-          pip install ansible
-
-      - name: Run Ansible Playbook
-        run: ansible-playbook k3_install.yml
-
-      - name: Set up kubectl
-        run: |
-          mkdir -p $HOME/.kube
-          sudo cp /etc/rancher/k3s/k3s.yaml $HOME/.kube/config
-          sudo chown $USER:$USER $HOME/.kube/config
-          chmod 644 $HOME/.kube/config
-          export KUBECONFIG=$HOME/.kube/config
-          # kubectl create ns reddit-app
-          kubectl get nodes 
-
-      - name: Configure Ingress controller    
-        run: |
-          export KUBECONFIG=$HOME/.kube/config
-          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-          # sudo apt install snapd
-          # sudo snap install helm --classic
+          ls -al myrelease/
 
 
-          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-          helm repo update
-          # helm install nginx-ingress ingress-nginx/ingress-nginx
-          helm install nginx-ingress ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace
+      # - name: Install Ansible
+      #   run: |
+      #     python -m pip install --upgrade pip
+      #     pip install ansible
 
-      - name: Wait for NGINX Ingress controller to be ready
-        run: |
-          export KUBECONFIG=$HOME/.kube/config
-          echo "Waiting for NGINX Ingress controller to be ready..."
-          kubectl wait --namespace  ingress-nginx\
-            --for=condition=ready pod \
-            --selector=app.kubernetes.io/component=controller \
-            --timeout=300s
+      # - name: Run Ansible Playbook
+      #   run: ansible-playbook k3_install.yml
+
+      # - name: Set up kubectl
+      #   run: |
+      #     mkdir -p $HOME/.kube
+      #     sudo cp /etc/rancher/k3s/k3s.yaml $HOME/.kube/config
+      #     sudo chown $USER:$USER $HOME/.kube/config
+      #     chmod 644 $HOME/.kube/config
+      #     export KUBECONFIG=$HOME/.kube/config
+      #     # kubectl create ns reddit-app
+      #     kubectl get nodes 
+
+      # - name: Configure Ingress controller    
+      #   run: |
+      #     export KUBECONFIG=$HOME/.kube/config
+      #     curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      #     # sudo apt install snapd
+      #     # sudo snap install helm --classic
 
 
-      - name: Run script 
-        run: |
-          chmod +x script.sh 
-          ./script.sh 
+      #     helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+      #     helm repo update
+      #     # helm install nginx-ingress ingress-nginx/ingress-nginx
+      #     helm install nginx-ingress ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace
 
-      - name: Deploy Helm Chart
-        run: |
-          export KUBECONFIG=$HOME/.kube/config
-          helm install myrelease ./mychart 
-          sleep 60
+      # - name: Wait for NGINX Ingress controller to be ready
+      #   run: |
+      #     export KUBECONFIG=$HOME/.kube/config
+      #     echo "Waiting for NGINX Ingress controller to be ready..."
+      #     kubectl wait --namespace  ingress-nginx\
+      #       --for=condition=ready pod \
+      #       --selector=app.kubernetes.io/component=controller \
+      #       --timeout=300s
+
+
+      # - name: Run script 
+      #   run: |
+      #     chmod +x script.sh 
+      #     ./script.sh 
+
+      # - name: Deploy Helm Chart
+      #   run: |
+      #     export KUBECONFIG=$HOME/.kube/config
+      #     helm install myrelease ./mychart 
+      #     sleep 60
 
       
-      - name: Run kubernetes commands 
-        run: |        
-          export KUBECONFIG=$HOME/.kube/config
-          # kubectl create ns reddit-app
-          # kubectl apply -f deployment.yml 
-          # kubectl apply -f ingress.yml 
-          kubectl get all -o wide 
-          # kubectl get ingress  -o wide
-          kubectl get ns -o wide     
-          kubectl get svc -o wide
+      # - name: Run kubernetes commands 
+      #   run: |        
+      #     export KUBECONFIG=$HOME/.kube/config
+      #     # kubectl create ns reddit-app
+      #     # kubectl apply -f deployment.yml 
+      #     # kubectl apply -f ingress.yml 
+      #     kubectl get all -o wide 
+      #     # kubectl get ingress  -o wide
+      #     kubectl get ns -o wide     
+      #     kubectl get svc -o wide
 
 
-      - name: Expose Service
-        run: |
-          export KUBECONFIG=$HOME/.kube/config
-          NODE_PORT=$(kubectl get svc myrelease-mychart -o jsonpath='{.spec.ports[0].nodePort}')
-          NODE_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[0].address}')
-          echo "NodePort for myrelease-mychart service: $NODE_PORT"
-          echo "Testing service at http://$NODE_IP:$NODE_PORT"
-          curl -s -o /dev/null -w "%{http_code}" http://$NODE_IP:$NODE_PORT
+      # - name: Expose Service
+      #   run: |
+      #     export KUBECONFIG=$HOME/.kube/config
+      #     NODE_PORT=$(kubectl get svc myrelease-mychart -o jsonpath='{.spec.ports[0].nodePort}')
+      #     NODE_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[0].address}')
+      #     echo "NodePort for myrelease-mychart service: $NODE_PORT"
+      #     echo "Testing service at http://$NODE_IP:$NODE_PORT"
+      #     curl -s -o /dev/null -w "%{http_code}" http://$NODE_IP:$NODE_PORT
 
-          echo "Testing /hello endpoint"
-          curl http://$NODE_IP:$NODE_PORT/hello
+      #     echo "Testing /hello endpoint"
+      #     curl http://$NODE_IP:$NODE_PORT/hello
 
-          echo "Testing /health endpoint"
-          curl http://$NODE_IP:$NODE_PORT/health
-          echo "Testing /readiness endpoint"
-          curl http://$NODE_IP:$NODE_PORT/readiness
-          echo "Testing root / endpoint"
-          curl http://$NODE_IP:$NODE_PORT
+      #     echo "Testing /health endpoint"
+      #     curl http://$NODE_IP:$NODE_PORT/health
+      #     echo "Testing /readiness endpoint"
+      #     curl http://$NODE_IP:$NODE_PORT/readiness
+      #     echo "Testing root / endpoint"
+      #     curl http://$NODE_IP:$NODE_PORT
 
 
-      - name: Get GitHub Runner Public IP
-        run: |
-          RUNNER_IP=$(curl -s ifconfig.me)
-          echo "Public IP of the GitHub Runner: $RUNNER_IP:30000"
-          echo "Forwarding local port 80 to service port $NODE_PORT"    
-          # Run kubectl port-forward in the background
-          kubectl port-forward svc/myrelease-mychart 80:$NODE_PORT &
+      # - name: Get GitHub Runner Public IP
+      #   run: |
+      #     RUNNER_IP=$(curl -s ifconfig.me)
+      #     echo "Public IP of the GitHub Runner: $RUNNER_IP:30000"
+      #     echo "Forwarding local port 80 to service port $NODE_PORT"    
+      #     # Run kubectl port-forward in the background
+      #     kubectl port-forward svc/myrelease-mychart 80:$NODE_PORT &
 
-      - name: Wait for Service to be Available
-        run: |
-          echo "Waiting for service to be available..."
-          sleep 120
+      # - name: Wait for Service to be Available
+      #   run: |
+      #     echo "Waiting for service to be available..."
+      #     sleep 120
           
           
     
