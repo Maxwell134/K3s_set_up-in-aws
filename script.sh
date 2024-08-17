@@ -123,7 +123,12 @@ LATEST_TAG=$(curl -s "$DOCKER_REGISTRY/v2/repositories/$REPO/tags?page_size=100"
 ls -lha 
 echo "Latest Tag: $LATEST_TAG"
 # Update the tag in the values.yaml file
-sed -i '' "s/tag:.*/tag: \"$LATEST_TAG\"/" mychart/values.yaml
+# sed -i '' "s/tag:.*/tag: \"$LATEST_TAG\"/" mychart/values.yaml
+# For Linux:
+sed -i "s/tag:.*/tag: \"$LATEST_TAG\"/" $VALUES_FILE
+
+# Output the updated file for verification
+cat $VALUES_FILE
 
 #cat $VALUES_FILE
 
