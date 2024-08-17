@@ -1,15 +1,16 @@
-name: Test with the flow
+name: Triggered by Repository Dispatch
 
 on:
-  workflow_dispatch:
+  repository_dispatch:
+    types: [custom-event]
 
 jobs:
-  build:
+  handle_dispatch:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Checkout Repository
+      - name: Checkout Code
         uses: actions/checkout@v4
-        
-      - name: Hello world
-        run: echo "hello world"
+
+      - name: Run Custom Script
+        run: echo "This workflow was triggered by a repository_dispatch event with type"
